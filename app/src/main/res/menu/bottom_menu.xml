@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/firstFragment"
+        android:title="Outdoor"
+        android:icon="@drawable/map_icon"/>
+    <item
+        android:id="@+id/secondFragment"
+        android:title="Indoor"
+        android:icon="@drawable/indoor_icon"/>
+    <item
+        android:id="@+id/thirdFragment"
+        android:title="Settings"
+        android:icon="@drawable/settings_icon"/>
+</menu>
