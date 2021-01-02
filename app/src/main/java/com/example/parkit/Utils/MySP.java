@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 
 public class MySP {
     public final static String SP_FILE = "sharedPreferencesFile";
-    public final static String SP_RECORDS_KEY = "sharedPreferencesFile";
 
     private static MySP instance;
     private SharedPreferences prefs;
@@ -27,6 +26,16 @@ public class MySP {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key,value);
         editor.apply();
+    }
+
+    public void putFloat(String key, float value){
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putFloat(key,value);
+        editor.apply();
+    }
+
+    public float getFloat(String key,float def) {
+        return prefs.getFloat(key,def);
     }
 
     public String getString(String key,String def) {

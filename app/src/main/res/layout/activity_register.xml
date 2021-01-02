@@ -42,6 +42,7 @@
         app:boxCornerRadiusTopEnd="13dp"
         app:boxCornerRadiusBottomStart="13dp"
         app:boxCornerRadiusBottomEnd="13dp"
+        app:endIconMode="clear_text"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -67,6 +68,7 @@
         app:boxCornerRadiusTopEnd="13dp"
         app:boxCornerRadiusBottomStart="13dp"
         app:boxCornerRadiusBottomEnd="13dp"
+        app:endIconMode="clear_text"
         >
 
         <com.google.android.material.textfield.TextInputEditText
@@ -92,6 +94,7 @@
         app:boxCornerRadiusTopEnd="13dp"
         app:boxCornerRadiusBottomStart="13dp"
         app:boxCornerRadiusBottomEnd="13dp"
+        app:endIconMode="clear_text"
         >
 
         <com.google.android.material.textfield.TextInputEditText

@@ -24,6 +24,8 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.parkit.R;
+import com.example.parkit.Utils.BaseActivity;
+import com.example.parkit.Utils.MySP;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -37,15 +39,21 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 
 public class firstFragment extends Fragment implements OnMapReadyCallback {
+    public final static String SP_LATITUDE_KEY = "latitudeKay";
+    public final static String SP_LONGITUDE_KEY = "longitudeKey";
+    public final static String SP_DESCRIPTION_KEY = "descriptionKey";
+
 
     private GoogleMap googleMap;
     private Location currentLocation;
     private FusedLocationProviderClient client;
 
-    private Button map_BTN_refresh;
-
+    private MaterialButton map_BTN_save,map_BTN_refresh,map_BTN_picture,map_BTN_load;
+    private TextInputLayout map_TIL_address;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -57,6 +65,8 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_first, container, false);
 
         client = LocationServices.getFusedLocationProviderClient(getActivity());
+        MySP.init(container.getContext());
+
 
         SupportMapFragment supportMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map_fragment);
         if (supportMapFragment != null)
@@ -64,7 +74,8 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
 
         findViews(view);
         initViews();
-
+        //check location permissions and set current location on map
+        //press Load to show last saved parking with description
         checkPermissionsGetLocation();
 
         return view;
@@ -72,6 +83,10 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
 
     private void findViews(View view) {
         map_BTN_refresh = view.findViewById(R.id.map_BTN_refresh);
+        map_BTN_save    = view.findViewById(R.id.map_BTN_save);
+        map_BTN_picture = view.findViewById(R.id.map_BTN_picture);
+        map_BTN_load    = view.findViewById(R.id.map_BTN_load);
+        map_TIL_address = view.findViewById(R.id.map_TIL_address);
     }
 
     private void initViews() {
@@ -81,6 +96,31 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
                 checkPermissionsGetLocation();
             }
         });
+        map_BTN_save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                save();
+            }
+        });
+        map_BTN_load.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                load();
+                moveCameraOnMap(currentLocation);
+            }
+        });
+    }
+
+    private void save() {
+        MySP.getInstance().putFloat(SP_LATITUDE_KEY,(float)currentLocation.getLatitude());
+        MySP.getInstance().putFloat(SP_LONGITUDE_KEY,(float)currentLocation.getLongitude());
+        MySP.getInstance().putString(SP_DESCRIPTION_KEY,map_TIL_address.getEditText().getText().toString());
+    }
+    private void load() {
+        currentLocation = new Location(LocationManager.GPS_PROVIDER);
+        currentLocation.setLatitude((double)MySP.getInstance().getFloat(SP_LATITUDE_KEY,0));
+        currentLocation.setLongitude((double)MySP.getInstance().getFloat(SP_LONGITUDE_KEY,0));
+        map_TIL_address.getEditText().setText(MySP.getInstance().getString(SP_DESCRIPTION_KEY,"No description available."));
     }
 
     @Override
@@ -100,6 +140,7 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
         } else {
             //when permission is not granted, request permission
             requestPermissions(new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},100);
+            checkPermissionsGetLocation();
         }
     }
 
@@ -114,7 +155,7 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
                     currentLocation = task.getResult();
 
                     if(currentLocation != null){
-                        setLocationOnMap();
+                        moveCameraOnMap(currentLocation);
                     } else {
                         LocationRequest locationRequest = new LocationRequest().setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY).setInterval(10000).setFastestInterval(1000).setNumUpdates(1);
 
@@ -122,7 +163,7 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
                             @Override
                             public void onLocationResult(LocationResult locationResult) {
                                 currentLocation = locationResult.getLastLocation();
-                                setLocationOnMap();
+                                moveCameraOnMap(currentLocation);
                             }
                         };
                         client.requestLocationUpdates(locationRequest,locationCallback, Looper.myLooper());
@@ -135,8 +176,9 @@ public class firstFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private void setLocationOnMap() {
-        LatLng latLng = new LatLng(currentLocation.getLatitude(),currentLocation.getLongitude());
+    private void moveCameraOnMap(Location location) {
+
+        LatLng latLng = new LatLng(location.getLatitude(),location.getLongitude());
         MarkerOptions markerOptions = new MarkerOptions().position(latLng).title("I AM HERE!");
         googleMap.animateCamera(CameraUpdateFactory.newLatLng(latLng));
         googleMap.animateCamera(CameraUpdateFactory.newLatLngZoom(latLng,17));

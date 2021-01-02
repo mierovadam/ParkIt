@@ -6,8 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class BaseActivity extends AppCompatActivity   {
 
-    public final static String SP_RECORDS_KEY = "sharedPreferencesFile";
-
     @Override
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
