@@ -61,8 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:hint="@string/enter_password"
-        android:layout_marginBottom="16dp"
-        app:placeholderText="+972 55 1234567"
+        android:layout_marginBottom="2dp"
         app:boxCornerRadiusTopStart="13dp"
         app:boxCornerRadiusTopEnd="13dp"
         app:boxCornerRadiusBottomStart="13dp"
@@ -79,27 +78,27 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
-
-    <TextView
-        android:id="@+id/login_LBL_parkit"
+    <CheckBox
+        android:id="@+id/login_CB_remember"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="14dp"
-        android:text="Park It!"
-        android:textColor="#FF5722"
-        android:textSize="24dp"
-        android:textStyle="bold"/>
+        android:checked="true"
+        android:text="Remember me"
+        android:layout_below="@id/login_EDT_password"
+        android:layout_alignLeft="@id/login_EDT_password"
+        />
+
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/login_BTN_login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:layout_below="@+id/login_EDT_password"
+        android:layout_below="@+id/login_CB_remember"
         app:cornerRadius="50dp"
         android:ems="10"
+        app:icon="@drawable/icon_login"
+        app:iconGravity="textStart"
         android:text="@string/login" />
 
     <com.google.android.material.button.MaterialButton
@@ -113,5 +112,16 @@
         android:ems="10"
         android:text="@string/register" />
 
+    <TextView
+        android:id="@+id/login_LBL_parkit"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="14dp"
+        android:text="Park It!"
+        android:textColor="#FF5722"
+        android:textSize="24dp"
+        android:textStyle="bold"/>
 
 </RelativeLayout>

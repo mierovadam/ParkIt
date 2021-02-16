@@ -6,8 +6,20 @@ import android.content.SharedPreferences;
 public class MySP {
     public final static String SP_FILE = "sharedPreferencesFile";
 
+    public final static String SP_LATITUDE_KEY       = "latitudeKay";
+    public final static String SP_LONGITUDE_KEY      = "longitudeKey";
+    public final static String SP_DESCR_KEY          = "descriptionKey";
+    public final static String SP_PHOTO_KEY          = "photoKey";
+
+    public final static String SP_PHOTO_INDOOR_KEY   = "photoIndoorKey";
+    public final static String SP_COLOR_KEY          = "colorKey";
+    public final static String SP_LEVEL_KEY          = "levelKey";
+    public final static String SP_NUMBER_KEY         = "numberKey";
+    public final static String SP_INDOOR_DESCR_KEY   = "descriptionIndoorKey";
+
     private static MySP instance;
     private SharedPreferences prefs;
+    private Context context;
 
     public static MySP getInstance(){
         return instance;
@@ -15,6 +27,7 @@ public class MySP {
 
     private MySP(Context context){
         prefs = context.getSharedPreferences(SP_FILE,Context.MODE_PRIVATE);
+        this.context = context;
     }
 
     public static void init(Context context){
@@ -45,5 +58,9 @@ public class MySP {
     public void removeKey(String key){
         SharedPreferences.Editor editor = prefs.edit() ;
         editor.remove(key).apply();
+    }
+
+    public void resetSP(){
+        prefs.edit().clear().commit();
     }
 }

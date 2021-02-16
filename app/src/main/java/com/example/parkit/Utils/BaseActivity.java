@@ -3,6 +3,9 @@ package com.example.parkit.Utils;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 
 public class BaseActivity extends AppCompatActivity   {
 
@@ -12,6 +15,10 @@ public class BaseActivity extends AppCompatActivity   {
         if (hasFocus) {
             MyScreenUtils.hideSystemUI(this);
         }
+    }
+
+    public String removeSpecialChars(String str){
+        return str.replaceAll("[^a-zA-Z0-9]", "");
     }
 
     //Double back press

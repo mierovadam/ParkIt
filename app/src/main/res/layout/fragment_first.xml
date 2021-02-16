@@ -14,6 +14,27 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"/>
 
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/map_LST_following"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense.ExposedDropdownMenu"
+        android:layout_width="160dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="3dp"
+        app:boxCornerRadiusTopEnd="25dp"
+        app:boxCornerRadiusBottomEnd="25dp"
+        app:boxCornerRadiusTopStart="25dp"
+        app:boxCornerRadiusBottomStart="25dp"
+        android:hint="Showing">
+
+        <AutoCompleteTextView
+            android:id="@+id/map_ACTV_followers"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:inputType="none" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/map_TIL_address"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_below="@id/map_fragment"
@@ -24,13 +45,13 @@
         android:layout_marginStart="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginBottom="8dp"
-        android:layout_marginTop="4dp"
+        android:layout_marginTop="2dp"
         app:boxCornerRadiusTopStart="16dp"
-        app:boxCornerRadiusTopEnd="13dp"
-        app:boxCornerRadiusBottomStart="13dp"
+        app:boxCornerRadiusTopEnd="16dp"
+        app:boxCornerRadiusBottomStart="16dp"
         app:boxCornerRadiusBottomEnd="16dp"
-        app:endIconMode="clear_text"
-        >
+        app:endIconMode="clear_text">
+
         <com.google.android.material.textfield.TextInputEditText
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -49,44 +70,62 @@
         android:text="Refresh"
         app:icon="@drawable/refresh_icon"/>
 
+    <LinearLayout
+        android:id="@+id/button_lay"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/map_TIL_address"
+        android:weightSum="6"
+        android:layout_alignLeft="@id/map_TIL_address"
+        android:layout_alignRight="@id/map_TIL_address">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/map_BTN_capture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:cornerRadius="50dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_marginRight="4dp"
+            app:icon="@drawable/camera_icon"
+            app:iconGravity="textStart"
+            android:layout_weight="1"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/map_BTN_picture"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Captured"
+            app:cornerRadius="50dp"
+            style="?attr/materialButtonOutlinedStyle"
+            android:layout_marginRight="4dp"
+            app:icon="@drawable/photograph_icon"
+            app:iconGravity="textStart"
+            android:layout_weight="3"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/map_BTN_load"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Load"
+            app:cornerRadius="50dp"
+            style="?attr/materialButtonOutlinedStyle"
+            app:icon="@drawable/download_icon"
+            app:iconGravity="textStart"
+            android:layout_weight="2"/>
+    </LinearLayout>
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/map_BTN_save"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="9"
         android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="60dp"
-        android:layout_marginRight="12dp"
-        android:layout_marginLeft="12dp"
+        android:layout_below="@+id/button_lay"
+        android:layout_alignRight="@id/map_TIL_address"
+        android:layout_alignLeft="@id/map_TIL_address"
         android:text="Save"
         app:cornerRadius="50dp"
         app:icon="@drawable/save_icon"
         app:iconGravity="textStart"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/map_BTN_load"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="7"
-        android:layout_alignRight="@id/map_TIL_address"
-        android:layout_below="@id/map_TIL_address"
-        android:text="Load"
-        app:cornerRadius="50dp"
-        style="?attr/materialButtonOutlinedStyle"
-        app:icon="@drawable/download_icon"/>
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/map_BTN_picture"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="8"
-        android:layout_below="@id/map_TIL_address"
-        android:layout_alignLeft="@id/map_TIL_address"
-        android:text="Capture"
-        app:cornerRadius="50dp"
-        style="?attr/materialButtonOutlinedStyle"
-        app:icon="@drawable/camera_icon"/>
 
 </RelativeLayout>

@@ -1,16 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.secondFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="450dp"
+        app:cardCornerRadius="25dp"
+        android:layout_margin="8dp"
+        android:elevation="10dp"
+        android:id="@+id/indoor_cardView">
+
+        <ImageView
+            android:id="@+id/indoor_IMG_photo"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            android:src="@drawable/map_background" />
+    </androidx.cardview.widget.CardView>
+
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/indoor_BTN_capture"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:insetLeft="0dp"
+        android:insetTop="0dp"
+        android:insetRight="0dp"
+        android:insetBottom="0dp"
+        android:layout_marginBottom="4dp"
+        android:layout_alignBottom="@id/indoor_cardView"
+        android:layout_centerHorizontal="true"
+        app:icon="@drawable/camera_icon"
+        app:cornerRadius="30dp"
+        app:iconGravity="textStart"
+        app:iconPadding="0dp" />
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="second Fragment"
-        android:layout_centerInParent="true"/>
+        android:orientation="horizontal"
+        android:layout_above="@id/indoor_TXTLAY_descrp"
+        android:layout_centerHorizontal="true">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/indoor_menu_level"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="110dp"
+            android:layout_height="wrap_content"
+            android:hint="Level"
+            app:boxCornerRadiusBottomStart="16dp"
+            app:boxCornerRadiusTopStart="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/indoor_ACTV_level"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/indoor_menu_number"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="123dp"
+            android:layout_height="wrap_content"
+            android:hint="Number"
+            >
+
+            <AutoCompleteTextView
+                android:id="@+id/indoor_ACTV_number"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/indoor_TIL_color"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="120dp"
+            android:layout_height="wrap_content"
+            android:hint="Color"
+            app:boxCornerRadiusBottomEnd="16dp"
+            app:boxCornerRadiusTopEnd="16dp">
+
+            <AutoCompleteTextView
+                android:id="@+id/indoor_ACTV_color"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none"
+                />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+    </LinearLayout>
+
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/indoor_TXTLAY_descrp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_above="@id/indoor_BTN_save"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:hint="Free description"
+        android:layout_marginStart="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="4dp"
+        app:boxCornerRadiusTopStart="16dp"
+        app:boxCornerRadiusTopEnd="13dp"
+        app:boxCornerRadiusBottomStart="13dp"
+        app:boxCornerRadiusBottomEnd="16dp"
+        app:endIconMode="clear_text"
+        >
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ems="22" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/indoor_BTN_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="60dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:text="Save"
+        app:cornerRadius="50dp"
+        app:icon="@drawable/save_icon"
+        app:iconGravity="textStart"/>
 
 </RelativeLayout>

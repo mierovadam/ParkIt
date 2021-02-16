@@ -19,11 +19,14 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 public class RegisterActivity extends BaseActivity {
 
     private FirebaseAuth mAuth;
-    private MaterialButton register_BTN_register;
+    private MaterialButton register_BTN_register,register_BTN_return;
     private TextInputLayout register_EDT_email,register_EDT_password1,register_EDT_password2;
 
     @Override
@@ -36,10 +39,11 @@ public class RegisterActivity extends BaseActivity {
     }
 
     private void findViews() {
-        register_EDT_email = findViewById(R.id.register_EDT_email);
-        register_EDT_password1 = findViewById(R.id.register_EDT_password1);
-        register_EDT_password2 = findViewById(R.id.register_EDT_password2);
-        register_BTN_register = findViewById(R.id.register_BTN_register);
+        register_EDT_email       = findViewById(R.id.register_EDT_email);
+        register_EDT_password1   = findViewById(R.id.register_EDT_password1);
+        register_EDT_password2   = findViewById(R.id.register_EDT_password2);
+        register_BTN_register    = findViewById(R.id.register_BTN_register);
+        register_BTN_return      = findViewById(R.id.register_BTN_return);
     }
 
     private void initViews() {
@@ -49,12 +53,19 @@ public class RegisterActivity extends BaseActivity {
                 register();
             }
         });
+        register_BTN_return.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openLoginActivity();
+            }
+        });
     }
 
     private void register() {
         String email = register_EDT_email.getEditText().getText().toString();
         String password1 = register_EDT_password1.getEditText().getText().toString();
         String password2 = register_EDT_password2.getEditText().getText().toString();
+
 
         if(!(password1.equals(password2))){
             Toast.makeText(this, "Passwords do not match.", Toast.LENGTH_LONG).show();
@@ -68,16 +79,17 @@ public class RegisterActivity extends BaseActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            // Sign in success, update UI with the signed-in user's information
                             Log.d("pttt", "createUserWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
-                            //updateUI(user);
+
+                            FirebaseDatabase database = FirebaseDatabase.getInstance();
+                            DatabaseReference myRef = database.getReference("emails");
+                            myRef.child(removeSpecialChars(user.getEmail())).setValue(user.getUid());
+
                             openLoginActivity();
                         } else {
-                            // If sign in fails, display a message to the user.
                             Log.w("pttt", "createUserWithEmail:failure", task.getException());
                             Toast.makeText(RegisterActivity.this, "Authentication failed.", Toast.LENGTH_SHORT).show();
-                            //updateUI(null);
                         }
                     }
                 });

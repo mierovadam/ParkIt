@@ -1,16 +1,163 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".Fragments.thirdFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
+        android:id="@+id/settings_LBL_settings"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="third Fragment"
-        android:layout_centerInParent="true"/>
+        android:layout_marginTop="30dp"
+        android:layout_alignLeft="@id/settings_LAY_followers"
+        android:text="Settings"
+        android:textColor="#FF5722"
+        android:textSize="40dp"
+        android:textStyle="bold" />
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="3dp"
+        android:layout_below="@id/settings_LBL_settings"
+        android:background="#FF5722" />
+
+    <TextView
+        android:id="@+id/deleteFollower_explenation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/settings_LAY_followers"
+        android:layout_below="@id/settings_LBL_settings"
+        android:layout_marginTop="24dp"
+        android:text="Delete a follower:"
+        />
+
+    <LinearLayout
+        android:id="@+id/settings_LAY_followers"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/deleteFollower_explenation"
+        android:layout_centerHorizontal="true">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/settings_LST_following"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            app:boxCornerRadiusTopEnd="25dp"
+            app:boxCornerRadiusBottomEnd="25dp"
+            app:boxCornerRadiusTopStart="25dp"
+            app:boxCornerRadiusBottomStart="25dp"
+            android:hint="Followers">
+
+            <AutoCompleteTextView
+                android:id="@+id/settings_ACTV_followers"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="none" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settings_BTN_delete"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:cornerRadius="50dp"
+            android:background="@drawable/delete_outline_icon"
+            app:iconGravity="textStart"/>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/addFollower_explenation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/settings_LAY_followingAdd"
+        android:layout_below="@id/settings_LAY_followers"
+        android:layout_marginTop="4dp"
+        android:text="Add a follower:" />
+
+    <LinearLayout
+        android:id="@+id/settings_LAY_followingAdd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@id/addFollower_explenation"
+        android:layout_centerHorizontal="true">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/settings_EDT_follow"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+            android:layout_width="270dp"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:hint="Enter email to allow follow"
+            app:boxCornerRadiusBottomStart="25dp"
+            app:boxCornerRadiusTopStart="25dp"
+            app:boxCornerRadiusBottomEnd="25dp"
+            app:boxCornerRadiusTopEnd="25dp"
+            app:endIconMode="clear_text"
+            >
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="270dp"
+                android:layout_height="wrap_content"
+                android:inputType="textEmailAddress"
+                android:ems="12"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/settings_BTN_add"
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            app:cornerRadius="50dp"
+            android:background="@drawable/add_icon"
+            app:iconGravity="textStart"/>
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/settings_IMG_logo"
+        android:layout_width="78dp"
+        android:layout_height="78dp"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/settings_BTN_reset"
+        android:layout_marginBottom="32dp"
+        android:src="@drawable/login_logo" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_BTN_reset"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@id/settings_BTN_signout"
+        android:layout_marginTop="64dp"
+        android:text="Reset"
+        app:cornerRadius="50dp"
+        app:icon="@drawable/refresh_icon"
+        app:iconGravity="start"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/settings_BTN_signout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:layout_centerHorizontal="true"
+        android:layout_above="@+id/settings_LBL_email"
+        android:text="Sign Out"
+        app:cornerRadius="50dp"
+        app:icon="@drawable/icon_login"
+        app:iconGravity="start"/>
+
+    <TextView
+        android:id="@+id/settings_LBL_email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Logged in as email@gmail.com"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="64dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="#FF5722"
+        />
 </RelativeLayout>
