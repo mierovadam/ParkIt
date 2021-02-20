@@ -8,7 +8,6 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
 import com.example.parkit.Objects.IndoorParkingLocation;
 import com.example.parkit.R;
 import com.example.parkit.Utils.BaseFragment;
@@ -26,9 +26,11 @@ import com.google.android.material.textfield.TextInputLayout;
 import java.util.Arrays;
 import java.util.stream.IntStream;
 
-public class secondFragment extends BaseFragment {
+import id.ionbit.ionalert.IonAlert;
 
-    private MaterialButton  indoor_BTN_capture, indoor_BTN_save;
+public class IndoorFragment extends BaseFragment {
+
+    private MaterialButton  indoor_BTN_capture, indoor_BTN_save,indoor_BTN_clear;
     private TextInputLayout indoor_TXTLAY_descrp;
     private ImageView indoor_IMG_photo;
     private AutoCompleteTextView indoor_ACTV_level,indoor_ACTV_color,indoor_ACTV_number;
@@ -36,7 +38,7 @@ public class secondFragment extends BaseFragment {
     private IndoorParkingLocation indoorParkingLocation;
     private Uri photoUri;
 
-    public secondFragment() {
+    public IndoorFragment() {
         // Required empty public constructor
     }
 
@@ -48,7 +50,7 @@ public class secondFragment extends BaseFragment {
     @RequiresApi(api = Build.VERSION_CODES.N)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_second, container, false);
+        View view = inflater.inflate(R.layout.indoor_fragment_layout, container, false);
 
         MySP.init(container.getContext());
         findViews(view);
@@ -107,20 +109,53 @@ public class secondFragment extends BaseFragment {
             if(!indoorParkingLocation.getUriString().equals("") ){
                 photoUri = Uri.parse(indoorParkingLocation.getUriString());
                 indoor_IMG_photo.setImageURI(photoUri);
+            }else{
+                Glide.with(getContext()).load(R.drawable.map_background).into(indoor_IMG_photo);
             }
         } catch (Exception e){
             highSnack("Nothing saved yet!");
         }
     }
 
+    //reset fragment data.
+    private void clear(){
+        new IonAlert(getContext())
+                .setTitleText("Warning")
+                .setContentText("Are you sure you want to clear indoor parking data ?")
+                .setConfirmClickListener(new IonAlert.ClickListener() {
+                    @Override
+                    public void onClick(IonAlert sDialog) {
+                        deletePreviousPicture(photoUri);  //deletes image from local storage.
+                        MySP.getInstance().removeKey(MySP.SP_PHOTO_INDOOR_KEY);
+                        MySP.getInstance().removeKey(MySP.SP_COLOR_KEY);
+                        MySP.getInstance().removeKey(MySP.SP_NUMBER_KEY);
+                        MySP.getInstance().removeKey(MySP.SP_LEVEL_KEY);
+                        MySP.getInstance().removeKey(MySP.SP_INDOOR_DESCR_KEY);
+                        load();
+                        highSnack("Cleared!");
+                        sDialog.dismiss();
+                    }
+                })
+                .showCancelButton(true)
+                .setCancelClickListener(new IonAlert.ClickListener() {
+                    @Override
+                    public void onClick(IonAlert sDialog) {
+                        sDialog.dismiss();
+                    }
+                })
+                .show();
+    }
+
+
     private void findViews(View view){
-        indoor_BTN_capture = view.findViewById(R.id.indoor_BTN_capture);
-        indoor_BTN_save = view.findViewById(R.id.indoor_BTN_save);
+        indoor_BTN_capture   = view.findViewById(R.id.indoor_BTN_capture);
+        indoor_BTN_save      = view.findViewById(R.id.indoor_BTN_save);
         indoor_TXTLAY_descrp = view.findViewById(R.id.indoor_TXTLAY_descrp);
-        indoor_IMG_photo = view.findViewById(R.id.indoor_IMG_photo);
-        indoor_ACTV_level = view.findViewById(R.id.indoor_ACTV_level);
-        indoor_ACTV_color = view.findViewById(R.id.indoor_ACTV_color);
-        indoor_ACTV_number = view.findViewById(R.id.indoor_ACTV_number);
+        indoor_IMG_photo     = view.findViewById(R.id.indoor_IMG_photo);
+        indoor_ACTV_level    = view.findViewById(R.id.indoor_ACTV_level);
+        indoor_ACTV_color    = view.findViewById(R.id.indoor_ACTV_color);
+        indoor_ACTV_number   = view.findViewById(R.id.indoor_ACTV_number);
+        indoor_BTN_clear     = view.findViewById(R.id.indoor_BTN_clear);
     }
 
 
@@ -137,6 +172,12 @@ public class secondFragment extends BaseFragment {
             @Override
             public void onClick(View v) {
                 save();
+            }
+        });
+        indoor_BTN_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clear();
             }
         });
 

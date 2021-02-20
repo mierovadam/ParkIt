@@ -12,13 +12,16 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.bumptech.glide.Glide;
 import com.example.parkit.Activities.LoginActivity;
 import com.example.parkit.R;
 import com.example.parkit.Utils.BaseFragment;
 import com.example.parkit.Utils.MySP;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -30,15 +33,16 @@ import java.util.ArrayList;
 
 import id.ionbit.ionalert.IonAlert;
 
-public class thirdFragment extends BaseFragment {
-    private MaterialButton settings_BTN_signout,settings_BTN_delete,settings_BTN_add,settings_BTN_reset;
-    private AutoCompleteTextView settings_ACTV_followers;
+public class SettingsFragment extends BaseFragment {
+    private MaterialButton settings_BTN_signout,settings_BTN_delete,settings_BTN_add,settings_BTN_reset,settings_BTN_info,settings_BTN_deleteFollowing;
+    private AutoCompleteTextView settings_ACTV_followers,settings_ACTV_following;
     private TextInputLayout settings_EDT_follow;
-    private String userID;
+    private String userID,followers,following;
     private TextView settings_LBL_email;
+    private ImageView settings_IMG_logo;
 
 
-    public thirdFragment() {
+    public SettingsFragment() {
         // Required empty public constructor
     }
 
@@ -49,36 +53,41 @@ public class thirdFragment extends BaseFragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_third, container, false);
+        View view = inflater.inflate(R.layout.settings_fragment_layout, container, false);
+
+        followers  = "followers";
+        following = "following";
 
         initFirebase();
         findViews(view);
         initViews();
-        updateDropBox();
+        updateDropMenu(settings_ACTV_following,following);          //initialize both dropdown menu's
+        updateDropMenu(settings_ACTV_followers,followers);
+
         MySP.init(container.getContext());
 
         return view;
     }
 
-    private void deleteFollower() {
+    //delete and update will wither be holding following or followers but never the same. Delete from my user and update other users list.
+    private void deleteFollower(String delete,String update,AutoCompleteTextView actv) {
         String email = removeSpecialChars(settings_ACTV_followers.getText().toString());
-        usersRef.child(firebaseUser.getUid()).child("followers").child(email).removeValue();
+        usersRef.child(firebaseUser.getUid()).child(delete).child(email).removeValue();
 
         emailsRef.child(email).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 userID = snapshot.getValue().toString();
-                usersRef.child(userID).child("following").child(removeSpecialChars(firebaseUser.getEmail())).removeValue();
-                settings_ACTV_followers.setText("");
-                updateDropBox();
-                highSnack("Follower removed successfully!");
+                usersRef.child(userID).child(update).child(removeSpecialChars(firebaseUser.getEmail())).removeValue();
+                actv.setText("");
+                updateDropMenu(actv,followers);
+                highSnack("User removed successfully!");
             }
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("pttt" ,"The read failed: updateUI in third fragment");
             }
         });
-
     }
 
     public void addFollower(){
@@ -88,11 +97,11 @@ public class thirdFragment extends BaseFragment {
         //set as following at follower's user
         updateOtherUser(email);
 
-        updateDropBox();
+        updateDropMenu(settings_ACTV_followers,followers);
         highSnack("Follower added successfully!");
     }
 
-    private void updateOtherUser(String email) {
+    private void updateOtherUser(String email) {        //set myself as following on who this email belongs to
         DatabaseReference ref = database.getReference("emails");
         userID = "";
 
@@ -111,11 +120,11 @@ public class thirdFragment extends BaseFragment {
         });
     }
 
-    public void updateDropBox(){
+    public void updateDropMenu(AutoCompleteTextView actv,String mode){
         ArrayList<String> userArray = new ArrayList<String>();
 
         //get followers array from database
-        usersRef.child(firebaseUser.getUid()).child("followers").addListenerForSingleValueEvent(new ValueEventListener() {
+        usersRef.child(firebaseUser.getUid()).child(mode).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 for (DataSnapshot dsp : snapshot.getChildren()) {
@@ -126,19 +135,19 @@ public class thirdFragment extends BaseFragment {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
                 Log.e("pttt" ,"The read failed: updateUI in third fragment");
-
             }
         });
 
-        //insert array into dropbox
+        //insert array into drop menu
         ArrayAdapter arrayAdapterLevels = new ArrayAdapter(getContext(),R.layout.drop_down_list_item,userArray);
-        settings_ACTV_followers.setAdapter(arrayAdapterLevels);
+        actv.setAdapter(arrayAdapterLevels);
     }
 
     private void signOut(){
         FirebaseAuth.getInstance().signOut();
 
-        // TODO: 1/5/21  remove all sharedPreference
+        //if you'd like to delete all Shared Pref on signing out, enable the next line.
+        //MySP.getInstance().resetSP();
 
         Intent myIntent = new Intent(getActivity(), LoginActivity.class);
         startActivity(myIntent);
@@ -146,20 +155,11 @@ public class thirdFragment extends BaseFragment {
         return;
     }
 
-    private void findViews(View view){
-        settings_BTN_signout = view.findViewById(R.id.settings_BTN_signout);
-        settings_BTN_delete = view.findViewById(R.id.settings_BTN_delete);
-        settings_BTN_add = view.findViewById(R.id.settings_BTN_add);
-        settings_ACTV_followers  = view.findViewById(R.id.settings_ACTV_followers);
-        settings_EDT_follow = view.findViewById(R.id.settings_EDT_follow);
-        settings_BTN_reset  = view.findViewById(R.id.settings_BTN_reset);
-        settings_LBL_email  = view.findViewById(R.id.settings_LBL_email);
-    }
 
     private void resetData(){
         new IonAlert(getContext())
                 .setTitleText("Are you sure you want to reset saved locations ?")
-                .setContentText("Can't be undone!")
+                .setContentText("Cannot be undone!!!")
                 .setConfirmClickListener(new IonAlert.ClickListener() {
                     @Override
                      public void onClick(IonAlert sDialog) {
@@ -179,8 +179,32 @@ public class thirdFragment extends BaseFragment {
                 .show();
     }
 
+    private void infoPopup(){
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
+        dialog.setTitle("Managing your following/followers lists.")
+                .setMessage("-You can enter another user's email to allow him to view your outdoor parking location as well.\n\n" +
+                        "-You can delete a following/followers user from your list but selecting them in the list and hitting the trash button.\n\n" +
+                        "-Reset button deletes all saved info on phone and cloud.").show();
+    }
+
+    private void findViews(View view){
+        settings_BTN_deleteFollowing = view.findViewById(R.id.settings_BTN_deleteFollowing);
+        settings_ACTV_following      = view.findViewById(R.id.settings_ACTV_following);
+        settings_ACTV_followers      = view.findViewById(R.id.settings_ACTV_followers);
+        settings_BTN_signout         = view.findViewById(R.id.settings_BTN_signout);
+        settings_BTN_delete          = view.findViewById(R.id.settings_BTN_delete);
+        settings_EDT_follow          = view.findViewById(R.id.settings_EDT_follow);
+        settings_BTN_reset           = view.findViewById(R.id.settings_BTN_reset);
+        settings_LBL_email           = view.findViewById(R.id.settings_LBL_email);
+        settings_BTN_info            = view.findViewById(R.id.settings_BTN_info);
+        settings_BTN_add             = view.findViewById(R.id.settings_BTN_add);
+
+        settings_IMG_logo = view.findViewById(R.id.settings_IMG_logo);
+        Glide.with(getContext()).load(R.drawable.login_logo).into(settings_IMG_logo);
+    }
+
     public void initViews(){
-        settings_LBL_email.setText("Logged in as "+firebaseUser.getEmail());
+        settings_LBL_email.setText("Signed in as "+firebaseUser.getEmail());
 
         settings_BTN_signout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -202,13 +226,25 @@ public class thirdFragment extends BaseFragment {
         settings_BTN_delete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deleteFollower();
+                deleteFollower(followers,following,settings_ACTV_followers);
             }
         });
         settings_BTN_reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 resetData();
+            }
+        });
+        settings_BTN_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoPopup();
+            }
+        });
+        settings_BTN_deleteFollowing.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                deleteFollower(following,followers,settings_ACTV_following);
             }
         });
     }

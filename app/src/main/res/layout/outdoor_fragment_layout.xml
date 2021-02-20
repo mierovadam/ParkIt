@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Fragments.firstFragment">
+    tools:context=".Fragments.OutdoorFragment">
 
     <fragment
         android:id="@+id/map_fragment"
@@ -33,6 +33,16 @@
             android:layout_height="match_parent"
             android:inputType="none" />
     </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/map_BTN_info"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignParentRight="true"
+        android:layout_margin="8dp"
+        android:layout_alignTop="@+id/map_LST_following"
+        android:background="@drawable/icon_info"
+        app:iconGravity="textStart"/>
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/map_TIL_address"

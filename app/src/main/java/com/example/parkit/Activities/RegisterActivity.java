@@ -1,15 +1,15 @@
 package com.example.parkit.Activities;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.parkit.R;
 import com.example.parkit.Utils.BaseActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -19,7 +19,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -44,6 +43,9 @@ public class RegisterActivity extends BaseActivity {
         register_EDT_password2   = findViewById(R.id.register_EDT_password2);
         register_BTN_register    = findViewById(R.id.register_BTN_register);
         register_BTN_return      = findViewById(R.id.register_BTN_return);
+
+        ImageView register_IMG_logo = findViewById(R.id.register_IMG_logo);
+        Glide.with(this).load(R.drawable.login_logo).into(register_IMG_logo);
     }
 
     private void initViews() {

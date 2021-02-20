@@ -2,7 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/firstFragment"
+        android:id="@+id/OutdoorFragment"
         android:title="Outdoor"
         android:icon="@drawable/map_icon"/>
     <item

@@ -15,7 +15,7 @@ import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
-import com.example.parkit.Fragments.firstFragment;
+import com.example.parkit.Fragments.OutdoorFragment;
 import com.github.drjacky.imagepicker.ImagePicker;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -57,7 +57,13 @@ public class BaseFragment extends Fragment {
 
     //delete previous pictures
     public void deletePreviousPicture(Uri uri){
-        File file = new File(uri.getPath());
+        File file;
+
+        if(uri!=null)
+            file = new File(uri.getPath());
+        else
+            return;
+
         if (file.exists()) {
             file.delete();
             Log.d("pttt", "previous picture deleted.");
@@ -99,8 +105,8 @@ public class BaseFragment extends Fragment {
 
         if(requestCode == MY_LOCATION_PERMISSION_CODE) {
             if (((grantResults.length > 0) && (grantResults[0] + grantResults[1] == PackageManager.PERMISSION_GRANTED))) {
-                firstFragment firstFragment = new firstFragment();
-                firstFragment.getCurrentLocation();
+                OutdoorFragment OutdoorFragment = new OutdoorFragment();
+                OutdoorFragment.getCurrentLocation();
             } else {
                 Toast.makeText(getActivity(), "Permission denied", Toast.LENGTH_LONG).show();
             }

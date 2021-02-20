@@ -11,14 +11,11 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.parkit.R;
-import com.example.parkit.Utils.BaseActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.snackbar.Snackbar;
 
-import static com.google.android.material.snackbar.Snackbar.make;
 
 public class MenuActivity extends AppCompatActivity {
 

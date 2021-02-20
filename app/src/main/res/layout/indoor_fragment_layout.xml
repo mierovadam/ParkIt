@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".Fragments.secondFragment">
+    tools:context=".Fragments.IndoorFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
@@ -18,10 +18,20 @@
             android:id="@+id/indoor_IMG_photo"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            android:src="@drawable/map_background" />
+            android:scaleType="centerCrop" />
     </androidx.cardview.widget.CardView>
 
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/indoor_BTN_clear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/indoor_cardView"
+        android:layout_alignBottom="@+id/indoor_cardView"
+        android:layout_marginRight="8dp"
+        android:text="Clear"
+        android:backgroundTint="@color/float_transparent"
+        />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/indoor_BTN_capture"

@@ -1,12 +1,10 @@
 package com.example.parkit.Fragments;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
@@ -18,7 +16,6 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
 import android.os.Looper;
 import android.provider.Settings;
@@ -32,6 +29,7 @@ import android.widget.AutoCompleteTextView;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.parkit.Objects.OutdoorParkingLocation;
 import com.example.parkit.R;
 import com.example.parkit.Utils.BaseFragment;
@@ -49,8 +47,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -63,7 +64,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-public class firstFragment extends BaseFragment implements OnMapReadyCallback {
+public class OutdoorFragment extends BaseFragment implements OnMapReadyCallback {
     private GoogleMap googleMap;
     private Location currentLocation;
     private  Marker marker;
@@ -74,14 +75,15 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
     //lists contain current user and other following users emails and id's
     private ArrayList<String> userIds;
     private ArrayList<String> usersArray;
+    private String selectedUser;
 
-    private MaterialButton map_BTN_save,map_BTN_refresh,map_BTN_picture,map_BTN_load,map_BTN_capture;
+    private MaterialButton map_BTN_save,map_BTN_refresh,map_BTN_picture,map_BTN_load,map_BTN_capture,map_BTN_info;
     private TextInputLayout map_TIL_address;
     private AutoCompleteTextView map_ACTV_followers;
 
     private Uri photoUri;
 
-    public firstFragment() {
+    public OutdoorFragment() {
         // Required empty public constructor
     }
 
@@ -92,7 +94,7 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_first, container, false);
+        View view = inflater.inflate(R.layout.outdoor_fragment_layout, container, false);
 
         client = LocationServices.getFusedLocationProviderClient(getActivity());
         MySP.init(container.getContext());
@@ -110,9 +112,10 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
     private void initArrays() {
         //init users array and add current user
         usersArray = new ArrayList<String>();
-        usersArray.add("Myself");
+        usersArray.add(getString(R.string.my_car)); //add "My Car" as first value, sets as default in initDropdownMenu()
         userIds = new ArrayList<String>();
         userIds.add(firebaseUser.getUid());
+        selectedUser = firebaseUser.getUid();
     }
 
     @Override       //get result from camera activity
@@ -125,16 +128,42 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
         }
     }
 
+    //show the saved image of the currently selected user in the dropdown menu.
     private void showImagePopUp(){
-        if(photoUri == null || photoUri.toString().equals("")){
-            Toast.makeText(getContext(),"No Photo saved!",Toast.LENGTH_SHORT).show();
-            return;
-        }
         Dialog dialog = new Dialog(getContext());
         dialog.setContentView(R.layout.image_popup);
         ImageView img = dialog.findViewById(R.id.popup_img);
-        img.setImageURI(photoUri);
         dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+
+        //if user tries to view photo of his own parking, load from SP, else load from firebase storage.
+        if(selectedUser.equals(firebaseUser.getUid())){
+            if(photoUri != null) {
+                Glide.with(getContext()).load(photoUri).into(img);
+                dialog.show();
+                return;
+            } else {
+                Toast.makeText(getActivity(), "Nothing to see here!", Toast.LENGTH_LONG).show();
+            }
+        } else if(isNetworkAvailable()){
+            StorageReference ref = storage.getReferenceFromUrl("gs://parkit-93ad8.appspot.com/images/users/"+selectedUser+".jpg");
+            final Uri[] imageURL = new Uri[1];
+            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    imageURL[0] = Uri.parse(uri.toString());
+                    Glide.with(getContext()).load(imageURL[0]).into(img);
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Toast.makeText(getActivity(), "Failed loading image.", Toast.LENGTH_LONG).show();
+
+                }
+            });
+        }else {
+            Toast.makeText(getActivity(), "Nothing to see here!", Toast.LENGTH_LONG).show();
+            return;
+        }
         dialog.show();
     }
 
@@ -231,28 +260,34 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
     private void initDropdownMenu() {
         ArrayAdapter arrayAdapter = new ArrayAdapter(getContext(),R.layout.drop_down_list_item,usersArray);
         map_ACTV_followers.setAdapter(arrayAdapter);
+        map_ACTV_followers.setText(arrayAdapter.getItem(0).toString(), false);      //sets the default drop menu starting value to "My Car"
     }
 
     private void showSelectedParking(){
         String selected = map_ACTV_followers.getText().toString();
         String id = userIds.get(usersArray.indexOf(selected));      //get index of userID in arraylist
+        selectedUser = id;
         load(id);
     }
 
 
     //save both on sharedPref and realtime database firebase
     private void save() {
-        String uriStr;
-        if(photoUri != null)
-            uriStr = photoUri.toString();
-        else
-            uriStr = "";
+        if(photoUri != null) {  //save image  on firebase storage
+            StorageReference ref = storage.getReferenceFromUrl("gs://parkit-93ad8.appspot.com/images/users/"+firebaseUser.getUid()+".jpg");
+            ref.putFile(photoUri).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    highSnack("Image upload failed.");
+                }
+            });
+        }
 
         outdoorParkingLocation = new OutdoorParkingLocation(
                 currentLocation.getLatitude(),
                 currentLocation.getLongitude(),
                 map_TIL_address.getEditText().getText().toString(),
-                uriStr,firebaseUser.getEmail());
+                photoUri.toString(),firebaseUser.getEmail());
 
         usersRef.child(firebaseUser.getUid()).child("OutdoorParkingLocation").setValue(outdoorParkingLocation);
 
@@ -261,7 +296,7 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
         MySP.getInstance().putString(MySP.SP_DESCR_KEY, map_TIL_address.getEditText().getText().toString());
 
         if (photoUri != null)
-            MySP.getInstance().putString(MySP.SP_PHOTO_KEY, uriStr);
+            MySP.getInstance().putString(MySP.SP_PHOTO_KEY, photoUri.toString());
 
         highSnack("Parking location saved!");
     }
@@ -329,6 +364,7 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
         map_TIL_address = view.findViewById(R.id.map_TIL_address);
         map_BTN_picture = view.findViewById(R.id.map_BTN_picture);
         map_ACTV_followers = view.findViewById(R.id.map_ACTV_followers);
+        map_BTN_info       = view.findViewById(R.id.map_BTN_info);
     }
 
     private void initViews() {
@@ -372,6 +408,22 @@ public class firstFragment extends BaseFragment implements OnMapReadyCallback {
                 showSelectedParking();
             }
         });
+        map_BTN_info.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                infoPopup();
+            }
+        });
+    }
+
+    private void infoPopup() {
+        MaterialAlertDialogBuilder dialog = new MaterialAlertDialogBuilder(getContext());
+        dialog.setTitle("Saving parking location outdoors:")
+                .setMessage("-If someone added you as a follower, you may view his parking info by selecting in the dropdown menu.\n\n-" +
+                        "-In the description box it will show you the estimated address but you may write what ever you'd like.\n\n" +
+                        "-You may take a picture of the area by clicking the camera icon and view it in Captured.\n\n" +
+                        "-Refresh will show you your current location and you have to press SAVE in order to save the location.\n\n" +
+                        "-Load will show you your last saved location").show();
     }
 
 }
